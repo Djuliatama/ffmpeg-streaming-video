@@ -6,14 +6,18 @@ const fs = require('fs');
 //Storage Multer Configuration
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, '../uploads/videos')); //Folder that saves videos
+      const uploadPath = path.join(__dirname, '../uploads/media');
+      if (!fs.existsSync(uploadPath)) {
+          fs.mkdirSync(uploadPath, { recursive: true });
+      }
+      cb(null, uploadPath);
   },
   filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    const fileExt = path.extname(file.originalname); // Extention file
-    cb(null, `${uniqueSuffix}-${file.originalname}`);
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+      cb(null, `${uniqueSuffix}-${file.originalname}`);
   },
 });
+
 
 // Filefilter for confirming only format video can be uploaded 
 const fileFilter = (req, file, cb) => {

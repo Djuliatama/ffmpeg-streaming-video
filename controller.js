@@ -8,6 +8,9 @@ const uploadVideo = async (req, res, next) => {
   try {
     const inputPath = path.join(__dirname, '../uploads/media' , req.file.filename);
     const outputPath = inputPath.replace(path.extname(req.file.filename), '.mp4');
+    console.log('Target path:', path.join(__dirname, '../uploads/videos', req.file?.filename));
+
+    console.log('File path:', inputPath);
 
     if(!req.file) {
       return res.status(400).send({ message: 'no video uploaded'})
@@ -20,7 +23,7 @@ const uploadVideo = async (req, res, next) => {
 
     res.status(200).send({
       message: 'Video successfully uploaded',
-      filePath: `/videos/${path.basename(outputPath)}`,
+      filePath: `/videos/${req.file.filename}`,
     });
 
   } catch (error) {
