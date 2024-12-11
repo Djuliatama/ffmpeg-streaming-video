@@ -2,6 +2,7 @@ const express = require('express');
 const { uploadVideo, streamVideo } = require('./controller.js')
 const multer = require('multer');
 const upload = require('./multer');
+const path = require('path')
 
 const app = express();
 
@@ -12,6 +13,9 @@ app.use(express.urlencoded({ extended: true }));
 // Routing 
 app.post('/upload', upload.single('video'), uploadVideo);
 app.get('/videos/:filename', streamVideo); 
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
+});
 
 app.use((err, req, res, next) => {
     console.error(err.stack); 

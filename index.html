@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Streaming</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        video {
+            width: 80%;
+            max-width: 800px;
+            margin-top: 20px;
+            border: 1px solid #ccc;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Video Streaming</h1>
+
+    <!-- Form to upload video -->
+    <form id="uploadForm">
+        <input type="file" id="videoFile" name="video" accept="video/*" required>
+        <button type="submit">Upload Video</button>
+    </form>
+
+    <!-- Video player for streaming -->
+    <video id="videoPlayer" controls></video>
+
+    <script>
+        const uploadForm = document.getElementById('uploadForm');
+        const videoPlayer = document.getElementById('videoPlayer');
+
+        uploadForm.addEventListener('submit', async (event) => {
+            event.preventDefault(); // Prevent form submission
+
+            const videoFile = document.getElementById('videoFile').files[0];
+            if (!videoFile) {
+                alert('Please select a video file to upload.');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('video', videoFile);
+
+            try {
+                // Upload video to the server
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Failed to upload: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                alert('Video uploaded successfully!');
+
+                // Set the video player source to the uploaded video
+                videoPlayer.src = data.filePath;
+                videoPlayer.load();
+                videoPlayer.play();
+
+            } catch (error) {
+                console.error('Error uploading video:', error);
+                alert('An error occurred while uploading the video.');
+            }
+        });
+    </script>
+</body>
+
+</html>
